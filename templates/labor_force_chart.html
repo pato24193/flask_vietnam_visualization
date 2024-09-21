@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lực lượng Lao động - Line Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Biểu đồ Lực lượng Lao động</h1>
+    <canvas id="lineChart" width="800" height="400"></canvas>
+    <script>
+        // Chuyển đổi dữ liệu từ Flask thành JSON trong JavaScript
+        var data = {{ data | tojson }};
+        
+        // Tách dữ liệu thành các mảng riêng biệt cho trục X và Y
+        var provinces = data.map(item => item[0]);
+        var laborForces = data.map(item => parseFloat(item[1].replace(',', '').replace('.', ''))); // Chuyển đổi số liệu từ string thành float
+
+        var ctx = document.getElementById('lineChart').getContext('2d');
+        var lineChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: provinces,
+                datasets: [{
+                    label: 'Lực lượng Lao động',
+                    data: laborForces,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Tỉnh/Thành'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Lực lượng Lao động'
+                        },
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
