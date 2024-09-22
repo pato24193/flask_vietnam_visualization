@@ -1,7 +1,7 @@
 import json
 
 import plotly.utils
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 import sqlite3
 import pandas as pd
 import plotly.graph_objects as go
@@ -115,13 +115,14 @@ def labor_force_chart():
     return render_template('labor_force_chart.html', data=data)
 
 # Lấy dữ liệu income từ SQLite
-def get_income_data():
+def get_income_data(year):
     conn = sqlite3.connect(Config.DB_NAME)
     cursor = conn.cursor()
     cursor.execute('''SELECT province, money 
                    FROM income 
+                   WHERE `year` = ? 
                    ORDER BY money DESC 
-                   LIMIT 10''')
+                   LIMIT 10''', (year,))
     data = cursor.fetchall()
     conn.close()
     return data
@@ -129,13 +130,14 @@ def get_income_data():
 # Route để hiển thị income theo Doughnut Chart
 @app.route('/income_chart')
 def income_doughnut_chart():
-    data = get_income_data()  # Lấy dữ liệu từ SQLite
+    selected_year = request.args.get('year', 'Sơ bộ 2023') 
+    data = get_income_data(selected_year)  # Lấy dữ liệu từ SQLite
     provinces = [row[0] for row in data]
     money = [row[1] for row in data]
 
     sendingData = {"provinces": provinces, "money": money}
 
-    return render_template('income_chart.html', data=sendingData)
+    return render_template('income_chart.html', data=sendingData, selected_year=selected_year)
 
 # Dashboard
 @app.route('/')
