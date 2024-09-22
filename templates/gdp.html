@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Dữ liệu GDP các nhóm ngành</h1>
+<!-- Biểu đồ hoặc nội dung liên quan đến GDP -->
+{{ chart | safe }}
+<!-- Bảng hiển thị dữ liệu GDP -->
+<div class="table-responsive mt-3">
+    <!-- Bảng hiển thị GDP -->
+    <table id="gdp-table" class="table table-striped table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>Mô tả</th>
+                <th>Năm 2016</th>
+                <th>Năm 2017</th>
+                <th>Năm 2018</th>
+                <th>Năm 2019</th>
+                <th>Năm 2020</th>
+                <th>Năm 2021</th>
+                <th>Năm 2022</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in gdp_data %}
+            <tr>
+                <td>{{ row.descriptor }}</td>
+                <td>{{ "{:,.0f}".format(row['2016']) if row['2016'] else '' }}</td>
+                <td>{{ "{:,.0f}".format(row['2017']) if row['2017'] else '' }}</td>
+                <td>{{ "{:,.0f}".format(row['2018']) if row['2018'] else '' }}</td>
+                <td>{{ "{:,.0f}".format(row['2019']) if row['2019'] else '' }}</td>
+                <td>{{ "{:,.0f}".format(row['2020']) if row['2020'] else '' }}</td>
+                <td>{{ "{:,.0f}".format(row['2021']) if row['2021'] else '' }}</td>
+                <td>{{ "{:,.0f}".format(row['2022']) if row['2022'] else '' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Include DataTables with Bootstrap 5 -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $('#gdp-table').DataTable({
+            "paging": true,
+            "searching": true,
+            "ordering": true,
+            "language": {
+                "search": "Tìm kiếm:",
+                "lengthMenu": "Hiển thị _MENU_ hàng",
+                "info": "Hiển thị _START_ đến _END_ của _TOTAL_ mục",
+                "paginate": {
+                    "previous": "Trước",
+                    "next": "Tiếp"
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

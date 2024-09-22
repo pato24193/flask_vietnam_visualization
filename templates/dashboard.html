@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Group 4 - PPR501</h1>
+
+<div class="row">
+    <div class="col-lg-4">
+        <div class="card text-white bg-info mb-3 bg-opacity-75">
+            <div class="card-header">Dân số</div>
+            <div class="card-body">
+                <h5 class="card-title">Thông tin Dân số</h5>
+                <p class="card-text">Xem thông tin chi tiết về dân số tại Việt Nam.</p>
+                <a href="/population" class="btn btn-light">Xem chi tiết</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card text-white bg-success mb-3 bg-opacity-75">
+            <div class="card-header">GDP</div>
+            <div class="card-body">
+                <h5 class="card-title">Thông tin GDP</h5>
+                <p class="card-text">Xem dữ liệu kinh tế và GDP qua các năm.</p>
+                <a href="/gdp" class="btn btn-light">Xem chi tiết</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
