@@ -24,7 +24,7 @@
     <div id="bar-chart"></div>
 
     <script type="text/javascript">
-        // Initial graph data from Flask
+        // Initial graph data from Flask (graphJSON is safely encoded as a string)
         var graphJSON = {{ graph_json | safe }};
 
         // Function to update the graph based on selected year
@@ -37,14 +37,12 @@
                 success: function(updatedGraphJSON) {
                     // Parse the JSON and render the updated graph
                     var graphData = JSON.parse(updatedGraphJSON);
-                    Plotly.newPlot('bar-chart', graphData.data, graphData.layout);
+                    Plotly.newPlot('bar-chart', updatedGraphJSON.data, updatedGraphJSON.layout);
                 }
             });
         }
 
-        // Render the initial graph
-        var graphData = JSON.parse(graphJSON);
-        Plotly.newPlot('bar-chart', graphData.data, graphData.layout);
+        Plotly.newPlot('bar-chart', graphJSON.data, graphJSON.layout);
     </script>
 </body>
 </html>
