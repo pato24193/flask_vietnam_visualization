@@ -61,6 +61,16 @@ app = Flask(__name__)
 #     return render_template('population_chart_wc.html')
 # ################# Minh: comment out un-used code
 
+def get_crime_data():
+    conn = sqlite3.connect(Config.DB_NAME)
+    cursor = conn.cursor()
+    cursor.execute('''SELECT province, cases
+                    FROM crimes WHERE year=2023
+                    GROUP BY province;''')
+    data = cursor.fetchall()
+    conn.close()
+    return data
+def
 # Lấy dữ liệu labor force từ SQLite
 def get_labor_data():
     conn = sqlite3.connect(Config.DB_NAME)
