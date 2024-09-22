@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}
+dia phuong page
+{% endblock %}
+
+{% block content %}
+<h1>Biểu đồ doanh thu du lịch theo giá hiện hành các tỉnh thành Việt Nam</h1>
+<div id="chart" class="chart-container" >
+    <script >
+        {{dt_diaphuong | safe}}
+    </script>
+</div>
+    <p>{{ title }}</p>
+{% endblock %}
