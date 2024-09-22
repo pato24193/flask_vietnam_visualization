@@ -71,8 +71,9 @@ def get_crime_data():
     cursor.execute('''SELECT province, cases FROM crimes''')
     data = cursor.fetchall()
     df = pd.DataFrame(data, columns=['province', 'cases'])
-    df['cases'] = df['cases'].astype(str).str.replace('.', '', regex=False).astype(float)
-    fig = go.Figure([go.Bar(x=df['province'], y=df['cases'])])
+    df['cases'] = df['cases'].apply(lambda x: str(int(x)) if x.is_integer() else str(x).replace('.', '')).astype(float)
+    df_sorted = df.sort_values(by='cases', ascending=False).head(10)
+    fig = go.Figure([go.Bar(x=df_sorted['province'], y=df_sorted['cases'])])
     graph_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     conn.close()
     return graph_json
@@ -86,12 +87,14 @@ def crime_chart():
 def get_medical_data():
     conn = sqlite3.connect(Config.DB_NAME)
     cursor = conn.cursor()
-    cursor.execute('''SELECT DISTINCT province_name, year, hospitals, nursings, local, clinics
-                    FROM medicalUnits WHERE year = {i}''')
+    cursor.execute('''SELECT DISTINCT province_name, year, totals
+                    FROM medicalUnits WHERE year = 2023''')
     data = cursor.fetchall()
     conn.close()
     return data
 
+
+@app.route('/medical_chart')
 # Lấy dữ liệu labor force từ SQLite
 def get_labor_data():
     conn = sqlite3.connect(Config.DB_NAME)
