@@ -96,13 +96,14 @@ def get_medical_data():
 
 @app.route('/medical_chart')
 # Lấy dữ liệu labor force từ SQLite
-def get_labor_data():
+def get_labor_data(year):
     conn = sqlite3.connect(Config.DB_NAME)
     cursor = conn.cursor()
     cursor.execute('''SELECT province, labor_force 
                    FROM labor_force 
+                   WHERE `year` = ? 
                    ORDER BY labor_force DESC 
-                   LIMIT 10''')
+                   LIMIT 10''', (year,))
     data = cursor.fetchall()
     conn.close()
     return data
@@ -110,9 +111,10 @@ def get_labor_data():
 # Route để hiển thị labor force theo line chart
 @app.route('/labor_force_chart')
 def labor_force_chart():
-    data = get_labor_data()  # Lấy dữ liệu từ SQLite
+    selected_year = request.args.get('year', 'Sơ bộ 2023')
+    data = get_labor_data(selected_year)  # Lấy dữ liệu từ SQLite
 
-    return render_template('labor_force_chart.html', data=data)
+    return render_template('labor_force_chart.html', data=data, selected_year=selected_year)
 
 # Lấy dữ liệu income từ SQLite
 def get_income_data(year):
@@ -130,7 +132,7 @@ def get_income_data(year):
 # Route để hiển thị income theo Doughnut Chart
 @app.route('/income_chart')
 def income_doughnut_chart():
-    selected_year = request.args.get('year', 'Sơ bộ 2023') 
+    selected_year = request.args.get('year', 'Sơ bộ 2023')
     data = get_income_data(selected_year)  # Lấy dữ liệu từ SQLite
     provinces = [row[0] for row in data]
     money = [row[1] for row in data]
