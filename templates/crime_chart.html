@@ -3,18 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crime Bar Chart</title>
+    <title>Crime Cases by Province</title>
+    <!-- Include Plotly.js -->
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
+    <h1>Crime Cases by Province</h1>
 
-    <h1>Crime Data by Province</h1>
-    <div id="graph"></div>
+    <!-- Dropdown to select year -->
+    <label for="year">Select Year:</label>
+    <select id="year" name="year" onchange="updateGraph()">
+        {% for year in years %}
+            <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>{{ year }}</option>
+        {% endfor %}
+    </select>
+
+    <!-- Div to render the Plotly graph -->
+    <div id="bar-chart"></div>
 
     <script type="text/javascript">
-        var graph_data = {{ graph_json | safe }};
-        Plotly.newPlot('graph', graph_data.data, graph_data.layout);
-    </script>
+        // Initial graph data from Flask
+        var graphJSON = {{ graph_json | safe }};
 
+        // Function to update the graph based on selected year
+        function updateGraph() {
+            var selectedYear = $('#year').val();
+            $.ajax({
+                type: 'POST',
+                url: '/update_crime_chart',
+                data: { year: selectedYear },
+                success: function(updatedGraphJSON) {
+                    // Render the updated graph
+                    Plotly.newPlot('bar-chart', updatedGraphJSON.data, updatedGraphJSON.layout);
+                }
+            });
+        }
+
+        // Render the initial graph
+        Plotly.newPlot('bar-chart', graphJSON.data, graphJSON.layout);
+    </script>
 </body>
 </html>
