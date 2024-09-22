@@ -180,7 +180,7 @@ def get_medical_data(year):
     cursor = conn.cursor()
 
     # Query to fetch data based on the selected year
-    cursor.execute('''SELECT province_name, year, totals FROM medicals WHERE year = ?''', (year,))
+    cursor.execute('''SELECT province, year, totals FROM medicals WHERE year = ?''', (year,))
     data = cursor.fetchall()
 
     conn.close()
@@ -190,7 +190,7 @@ def get_medical_data(year):
 
     # Sort by totals and take top 10
     df_sorted = df.sort_values(by='totals', ascending=False).head(10)
-
+    print(df_sorted)
     # Create a horizontal bar chart
     fig = go.Figure([go.Bar(
         x=df_sorted['totals'],  # Values on the x-axis (totals)
@@ -198,7 +198,7 @@ def get_medical_data(year):
         orientation='h',  # Horizontal bar chart
         marker=dict(
             color=df_sorted['totals'],  # Coloring bars based on totals
-            colorscale='Blues',  # Color scale for the bars
+            colorscale='Bluered',  # Color scale for the bars
             showscale=True  # Display the color scale
         )
     )])
