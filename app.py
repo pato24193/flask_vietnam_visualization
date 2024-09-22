@@ -75,6 +75,7 @@ def get_crime_data(year):
 
     # Creating DataFrame
     df = pd.DataFrame(data, columns=['province', 'cases'])
+    df['cases'] = pd.to_numeric(df['cases'], errors='coerce')
 
     # Convert 'cases' to the appropriate format
     df['cases'] = df['cases'].apply(lambda x: str(int(x)) if x.is_integer() else str(x).replace('.', '')).astype(int)
