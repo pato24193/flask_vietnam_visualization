@@ -1,12 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bar Chart</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
+    {% extends "base.html" %}
+
+    {% block content %}
+    <h1>Biểu đồ thu nhập</h1>
     <canvas id="barChart" width="400" height="400"></canvas>
     <script>
         var ctx = document.getElementById('barChart').getContext('2d');
@@ -55,5 +50,4 @@
             }
         });
     </script>
-</body>
-</html>
+{% endblock %}

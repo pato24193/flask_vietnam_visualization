@@ -1,10 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Lực lượng Lao động - Line Chart</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block content %}
     <h1>Biểu đồ Lực lượng Lao động</h1>
     <canvas id="lineChart" width="800" height="400"></canvas>
     <script>
@@ -47,5 +43,4 @@
             }
         });
     </script>
-</body>
-</html>
+{% endblock %}
