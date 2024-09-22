@@ -1,12 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Graph Example</title>
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-</head>
-<body>
+{% extends "base.html" %}
+{% block content %}
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
     <h1>Crime Data by Province</h1>
     <div id="graph"></div>
@@ -15,6 +9,4 @@
         var graph_data = {{ graph_json | safe }};
         Plotly.newPlot('graph', graph_data.data, graph_data.layout);
     </script>
-
-</body>
-</html>
+{% endblock %}
