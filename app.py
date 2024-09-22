@@ -70,7 +70,22 @@ def get_crime_data():
     data = cursor.fetchall()
     conn.close()
     return data
-def
+
+# Route để hiển thị labor force theo line chart
+@app.route('/crime_chart')
+def labor_force_chart():
+    data = get_crime_data()  # Lấy dữ liệu từ SQLite
+    return render_template('crime_chart.html', data=data)
+
+def get_medical_data():
+    conn = sqlite3.connect(Config.DB_NAME)
+    cursor = conn.cursor()
+    cursor.execute('''SELECT DISTINCT province_name, year, hospitals, nursings, local, clinics
+                    FROM medicalUnits WHERE year = {i}''')
+    data = cursor.fetchall()
+    conn.close()
+    return data
+
 # Lấy dữ liệu labor force từ SQLite
 def get_labor_data():
     conn = sqlite3.connect(Config.DB_NAME)

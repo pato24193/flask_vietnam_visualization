@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Double Bar Graph: Cases by City and Year</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <h1>Cases by City and Year</h1>
+  <canvas id="myChart" width="400" height="200"></canvas>
+
+  <script>
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: {{ city_names|tojson }}, // Replace with your city names list
+        datasets: [
+          {
+            label: 'Cases in 2022',
+            data: {{ cases_2022|tojson }}, // Replace with cases for 2022 list
+            backgroundColor: 'rgba(255, 99, 132, 0.2)', // Reddish color
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 1
+          },
+          {
+            label: 'Cases in 2023',
+            data: {{ cases_2023|tojson }}, // Replace with cases for 2023 list
+            backgroundColor: 'rgba(54, 162, 235, 0.2)', // Bluish color
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+          }
+        ]
+      },
+      options: {
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero: true
+            }
+          }]
+        }
+      }
+    });
+  </script>
+</body>
+</html>
