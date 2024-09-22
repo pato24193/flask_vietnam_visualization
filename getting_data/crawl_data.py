@@ -31,6 +31,7 @@ class CrawlData:
 
         service = Service(self.driver_path)
         driver = webdriver.Chrome(service=service, options=chrome_options)
+        # driver = webdriver.Chrome(service=service)
         return driver
 
     # Hàm tạo table SQLite để lưu dữ liệu
@@ -95,6 +96,7 @@ class CrawlData:
         # Lấy tất cả các tỉnh thành từ thẻ <select> đầu tiên
         provinces = [option.text for option in Select(province_select).options]
         regions = [
+            'TỔNG SỐ'
             'CẢ NƯỚC',
             'Đồng bằng sông Hồng',
             'Trung du và miền núi phía Bắc',
@@ -125,9 +127,16 @@ class CrawlData:
             Select(province_select).select_by_visible_text(province_text)  # Chọn tỉnh thành
             Select(year_select).select_by_visible_text(str(year_input))  # Chọn năm
 
-            # if self.db_name == 'income':
-            #     source_salary = select_elements[2]
-            #     Select(source_salary).select_by_visible_text('Thu từ tiền lương, tiền công')  # Chọn nguồn thu
+            if self.table_name == 'crimes':
+                crime_select = select_elements[2]
+
+                # # Lấy toàn bộ HTML bên trong thẻ <select>
+                # inner_html = crime_select.get_attribute("innerHTML")
+
+                # # In toàn bộ HTML của thẻ <select>
+                # print(inner_html)
+
+                Select(crime_select).select_by_visible_text('Số vụ án đã bị khởi tố')
 
             # Click vào button 'Tiếp tục'
             continue_button = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.XPATH, "//input[@value='Tiếp tục']")))
@@ -135,9 +144,10 @@ class CrawlData:
 
             # Kiểm tra và xử lý popup (nếu có)
             self.handle_popup()
-
+            
             # Lấy tất cả các bảng trên trang
             tables = self.driver.find_elements(By.TAG_NAME, "table")
+            print(len(tables))
 
             # Lấy bảng cuối cùng và ô <td> cuối cùng của bảng
             last_table = tables[2]
@@ -162,13 +172,23 @@ class CrawlData:
 
 # Ví dụ sử dụng
 if __name__ == "__main__":
+    # luc luong lao dong
     # url = "https://www.gso.gov.vn/px-web-2/?pxid=V0237&theme=D%C3%A2n%20s%E1%BB%91%20v%C3%A0%20lao%20%C4%91%E1%BB%99ng"
     # year_input = 'Sơ bộ 2023'
     # table_name = 'labor_force'
     # column_name = 'labor_force'
-    url = "https://www.gso.gov.vn/px-web-2/?pxid=V1437&theme=Y%20t%E1%BA%BF%2C%20v%C4%83n%20h%C3%B3a%20v%C3%A0%20%C4%91%E1%BB%9Di%20s%E1%BB%91ng"
-    year_input = 'Sơ bộ 2023'
-    table_name = 'income'
-    column_name = 'money'
+
+    # thu nhap binh quan
+    # url = "https://www.gso.gov.vn/px-web-2/?pxid=V1437&theme=Y%20t%E1%BA%BF%2C%20v%C4%83n%20h%C3%B3a%20v%C3%A0%20%C4%91%E1%BB%9Di%20s%E1%BB%91ng"
+    # year_input = 'Sơ bộ 2023'
+    # table_name = 'income'
+    # column_name = 'money'
+
+    # ti le toi pham
+    url = "https://www.gso.gov.vn/px-web-2/?pxid=V1466&theme=Y%20t%E1%BA%BF%2C%20v%C4%83n%20h%C3%B3a%20v%C3%A0%20%C4%91%E1%BB%9Di%20s%E1%BB%91ng"
+    year_input = '2023'
+    table_name = 'crimes'
+    column_name = 'cases'
+
     crawler = CrawlData(url, table_name=table_name, column_name=column_name)
     crawler.run(year_input)
