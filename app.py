@@ -73,7 +73,7 @@ def get_crime_data():
 
 # Route để hiển thị labor force theo line chart
 @app.route('/crime_chart')
-def labor_force_chart():
+def crime_chart():
     data = get_crime_data()  # Lấy dữ liệu từ SQLite
     return render_template('crime_chart.html', data=data)
 
