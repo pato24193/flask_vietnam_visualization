@@ -138,6 +138,11 @@ class CrawlData:
 
                 Select(crime_select).select_by_visible_text('Số vụ án đã bị khởi tố')
 
+            if self.table_name == 'medicals':
+                medical_select = select_elements[2]
+
+                Select(medical_select).select_by_visible_text('Tổng số')
+
             # Click vào button 'Tiếp tục'
             continue_button = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.XPATH, "//input[@value='Tiếp tục']")))
             continue_button.click()
@@ -185,10 +190,16 @@ if __name__ == "__main__":
     # column_name = 'money'
 
     # ti le toi pham
-    url = "https://www.gso.gov.vn/px-web-2/?pxid=V1466&theme=Y%20t%E1%BA%BF%2C%20v%C4%83n%20h%C3%B3a%20v%C3%A0%20%C4%91%E1%BB%9Di%20s%E1%BB%91ng"
-    year_input = '2023'
-    table_name = 'crimes'
-    column_name = 'cases'
+    # url = "https://www.gso.gov.vn/px-web-2/?pxid=V1466&theme=Y%20t%E1%BA%BF%2C%20v%C4%83n%20h%C3%B3a%20v%C3%A0%20%C4%91%E1%BB%9Di%20s%E1%BB%91ng"
+    # year_input = '2023'
+    # table_name = 'crimes'
+    # column_name = 'cases'
+
+    # y te: so co so kham chua benh
+    url = "https://www.gso.gov.vn/px-web-2/?pxid=V1405&theme=Y%20t%E1%BA%BF%2C%20v%C4%83n%20h%C3%B3a%20v%C3%A0%20%C4%91%E1%BB%9Di%20s%E1%BB%91ng"
+    year_input = '2017'
+    table_name = 'medicals'
+    column_name = 'totals'
 
     crawler = CrawlData(url, table_name=table_name, column_name=column_name)
     crawler.run(year_input)
