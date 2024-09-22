@@ -1,6 +1,10 @@
+import json
+
+import plotly.utils
 from flask import Flask, render_template
 import sqlite3
 import pandas as pd
+import plotly.graph_objects as go
 from wordcloud import WordCloud
 import os
 from config import Config
@@ -64,18 +68,20 @@ app = Flask(__name__)
 def get_crime_data():
     conn = sqlite3.connect(Config.DB_NAME)
     cursor = conn.cursor()
-    cursor.execute('''SELECT province, cases
-                    FROM crimes WHERE year=2023
-                    GROUP BY province;''')
+    cursor.execute('''SELECT province, cases FROM crimes''')
     data = cursor.fetchall()
+    df = pd.DataFrame(data, columns=['province', 'cases'])
+    df['cases'] = df['cases'].astype(str).str.replace('.', '', regex=False).astype(float)
+    fig = go.Figure([go.Bar(x=df['province'], y=df['cases'])])
+    graph_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     conn.close()
-    return data
+    return graph_json
 
 # Route để hiển thị labor force theo line chart
 @app.route('/crime_chart')
 def crime_chart():
-    data = get_crime_data()  # Lấy dữ liệu từ SQLite
-    return render_template('crime_chart.html', data=data)
+    graph_json = get_crime_data()  # Lấy dữ liệu từ SQLite
+    return render_template('crime_chart.html', graph_json=graph_json)
 
 def get_medical_data():
     conn = sqlite3.connect(Config.DB_NAME)
