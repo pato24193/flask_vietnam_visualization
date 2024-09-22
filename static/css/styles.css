@@ -1,0 +1,31 @@
+/* styles.css */
+.container {
+    background-color: #f8f9fa;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.navbar .nav-link {
+    font-size: 18px;
+    padding: 10px;
+}
+
+.navbar .nav-link:hover {
+    opacity: 0.7;
+    color: #fff;
+    border-radius: 5px;
+}
+
+h1 {
+    font-family: 'Arial', sans-serif;
+    color: #343a40;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.navbar .nav-link.active {
+    background-color: #f8f9fa;
+    color: #000;
+    border-radius: 5px;
+}

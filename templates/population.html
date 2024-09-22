@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Bản đồ và biểu đồ dân số Việt Nam</h1>
+
+<div class="form-group mb-3">
+    <label for="year-select">Chọn năm:</label>
+    <select id="year-select" class="form-select">
+        <option value="2021">2021</option>
+        <option value="2022">2022</option>
+        <option value="2023" selected>2023</option>
+    </select>
+</div>
+
+<!-- Hiển thị bản đồ -->
+<div id="population-map" style="width: 100%; height: 500px; margin-top: 20px;""></div>
+<!-- Hiển thị biểu đồ cột -->
+<div id="population-bar" style="width: 100%; height: 500px; margin-top: 20px;"></div>
+
+<!-- Bảng hiển thị dân số -->
+<div class="table-responsive mt-3">
+    <table id="population-table" class="table table-striped table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>Tỉnh/Thành phố</th>
+                <th>Dân số năm 2021</th>
+                <th>Dân số năm 2022</th>
+                <th>Dân số năm 2023</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in population_data %}
+            <tr>
+                <td>{{ row.province_name }}</td>
+                <td>{{ "{:,.0f}".format(row.population_2021) }}</td>
+                <td>{{ "{:,.0f}".format(row.population_2022) }}</td>
+                <td>{{ "{:,.0f}".format(row.population_2023) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+<!-- Hiển thị bản đồ và biểu đồ cột -->
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+    var graphMapData = {{ graph_map_json | safe }};
+    Plotly.newPlot('population-map', graphMapData.data, graphMapData.layout);
+
+    var graphBarData = {{ graph_bar_json | safe }};
+    Plotly.newPlot('population-bar', graphBarData.data, graphBarData.layout);
+</script>
+
+<!-- Include DataTables with Bootstrap 5 -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $('#population-table').DataTable({
+            "paging": true,
+            "searching": true,
+            "ordering": true,
+            "language": {
+                "search": "Tìm kiếm:",
+                "lengthMenu": "Hiển thị _MENU_ hàng",
+                "info": "Hiển thị _START_ đến _END_ của _TOTAL_ mục",
+                "paginate": {
+                    "previous": "Trước",
+                    "next": "Tiếp"
+                }
+            }
+        });
+    });
+
+     // Hàm cập nhật bản đồ
+    function updateMap(year) {
+        $.ajax({
+            url: '/get_population_map/' + year, // Đường dẫn API để lấy dữ liệu bản đồ
+            method: 'GET',
+            success: function(response) {
+                graphMapDataNew = JSON.parse(response)
+                Plotly.newPlot('population-map', graphMapDataNew.data, graphMapDataNew.layout);
+            }
+        });
+    }
+
+    // Hàm cập nhật biểu đồ cột
+    function updateBar(year) {
+        $.ajax({
+            url: '/get_population_bar/' + year, // Đường dẫn API để lấy dữ liệu biểu đồ
+            method: 'GET',
+            success: function(response) {
+                graphBarDataNew = JSON.parse(response)
+
+                Plotly.newPlot('population-bar', graphBarDataNew.data, graphBarDataNew.layout);
+            }
+        });
+    }
+
+    // Lắng nghe sự kiện thay đổi của dropdown
+    $('#year-select').change(function() {
+        var selectedYear = $(this).val();
+        updateMap(selectedYear); // Cập nhật bản đồ với năm được chọn
+        updateBar(selectedYear); // Cập nhật biểu đồ cột với năm được chọn
+    });
+
+    // Khởi tạo bản đồ và biểu đồ ban đầu
+    var initialYear = $('#year-select').val();
+    updateMap(initialYear);
+    updateBar(initialYear);
+</script>
+
+{% endblock %}
