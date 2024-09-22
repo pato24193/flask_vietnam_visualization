@@ -1,6 +1,10 @@
+import json
+
+import plotly.utils
 from flask import Flask, render_template, request
 import sqlite3
 import pandas as pd
+import plotly.graph_objects as go
 from wordcloud import WordCloud
 import os
 import plotly.graph_objects as go
@@ -86,14 +90,144 @@ def convert_to_float(df, column_name):
 #     return render_template('population_chart_wc.html')
 # ################# Minh: comment out un-used code
 
+def get_crime_data():
+    conn = sqlite3.connect(Config.DB_NAME)
+    cursor = conn.cursor()
+    cursor.execute('''SELECT province, cases FROM crimes''')
+    data = cursor.fetchall()
+    # Creating DataFrame
+    df = pd.DataFrame(data, columns=['province', 'cases'])
+
+    # Convert 'cases' to the appropriate format
+    df['cases'] = df['cases'].apply(lambda x: str(int(x)) if x.is_integer() else str(x).replace('.', '')).astype(int)
+
+    # Sort values by 'cases' and take the top 10
+    df_sorted = df.sort_values(by='cases', ascending=False).head(10)
+    # print(df_sorted)
+    # Customize bar chart with colors and labels
+    fig = go.Figure([go.Bar(
+        x=df_sorted['province'],
+        y=df_sorted['cases'],
+        marker=dict(
+            color=df_sorted['cases'],  # Coloring bars based on the values
+            colorscale='YlOrRd',  # Choose a color scale, e.g., 'Viridis', 'Bluered', 'Cividis', etc.
+            showscale=True  # Show color scale on the side
+        )
+    )])
+
+    # Update layout for better appearance
+    fig.update_layout(
+        title='Top 10 Provinces by Crime Cases in 2023',
+        xaxis_title='Province',
+        yaxis_title='Number of Cases',
+        xaxis_tickangle=-45,  # Rotate x-axis labels for better readability
+        yaxis=dict(
+            showline=True,
+            showgrid=True,
+            gridcolor='lightgray',
+            tickformat='digits',
+            linecolor='black',  # Set line color for y-axis
+            linewidth=0.5
+        ),
+        xaxis=dict(
+            showline=True,
+            linecolor='black',  # Set line color for y-axis
+            linewidth=1
+        ),
+        plot_bgcolor='rgba(0,0,0,0)',  # Set the plot background to transparent
+        paper_bgcolor='rgba(245,245,245,245)',  # Set the page background to transparent
+    )
+
+    # Convert plotly figure to JSON for rendering
+    graph_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+
+    # Close database connection
+    conn.close()
+
+    # Return the graph JSON
+    return graph_json
+
+
+# Route để hiển thị labor force theo line chart
+@app.route('/crime_chart')
+def crime_chart():
+    graph_json = get_crime_data()  # Lấy dữ liệu từ SQLite
+    return render_template('crime_chart.html', graph_json=graph_json)
+
+def get_medical_data():
+    conn = sqlite3.connect(Config.DB_NAME)
+    cursor = conn.cursor()
+    # cursor.execute('''SELECT DISTINCT province_name, year, totals
+    #                 FROM medicals WHERE year = 2017''')
+    # data = cursor.fetchall()
+    data = {
+        'province': ['Hà Nội', 'Vĩnh Phúc', 'Bắc Ninh', 'Quảng Ninh', 'Hải Dương', 'Province A', 'Province B', 'Province C', 'Province D', 'Province E', 'Province F'],
+        'year': [2017] * 11,
+        'totals': [230, 120, 340, 450, 210, 180, 360, 410, 290, 380, 250]
+    }
+    conn.close()
+    df = pd.DataFrame(data, columns=['province', 'year', 'totals'])
+    df_sorted = df.sort_values(by='totals', ascending=False).head(10)
+    # Create a horizontal bar chart
+    fig = go.Figure([go.Bar(
+        x=df_sorted['totals'],  # Values on the x-axis (totals)
+        y=df_sorted['province'],  # Provinces on the y-axis
+        orientation='h',  # Horizontal bar chart
+        marker=dict(
+            color=df_sorted['totals'],  # Coloring bars based on totals
+            colorscale='Blues',  # Color scale for the bars
+            showscale=True  # Display the color scale
+        )
+    )])
+
+    # Update layout for better appearance
+    fig.update_layout(
+        title='Top 10 Provinces by Number of Health Facilities in 2017',
+        xaxis_title='Number of Health Facilities',
+        yaxis_title='Province',
+        yaxis=dict(
+            autorange="reversed",  # Ensure the largest bar is at the top
+            showline=True,
+            linecolor='black',  # Set line color for y-axis
+            linewidth=1
+        ),
+        xaxis=dict(
+            showgrid=True,  # Show grid lines on the x-axis
+            showline=True,
+            gridcolor='lightgray',  # Set the color of the grid lines
+            gridwidth=1,  # Set the thickness of the grid lines
+            linecolor='black',  # Set line color for y-axis
+            linewidth=0.5
+    ),
+        plot_bgcolor='rgba(0,0,0,0)',  # Transparent background
+        paper_bgcolor='rgba(0,0,0,0)'  # Transparent page background
+    )
+
+    # Convert plotly figure to JSON for rendering
+    graph_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+
+    # Close database connection
+    conn.close()
+
+    # Return the graph JSON
+    return graph_json
+
+@app.route('/medical_chart')
+def medical_chart():
+    graph_json = get_medical_data()
+    return render_template('medical_chart.html', graph_json=graph_json)
+
+
+
 # Lấy dữ liệu labor force từ SQLite
-def get_labor_data():
+def get_labor_data(year):
     conn = sqlite3.connect(Config.DB_NAME)
     cursor = conn.cursor()
     cursor.execute('''SELECT province, labor_force 
                    FROM labor_force 
+                   WHERE `year` = ? 
                    ORDER BY labor_force DESC 
-                   LIMIT 10''')
+                   LIMIT 10''', (year,))
     data = cursor.fetchall()
     conn.close()
     return data
@@ -101,18 +235,20 @@ def get_labor_data():
 # Route để hiển thị labor force theo line chart
 @app.route('/labor_force_chart')
 def labor_force_chart():
-    data = get_labor_data()  # Lấy dữ liệu từ SQLite
+    selected_year = request.args.get('year', 'Sơ bộ 2023')
+    data = get_labor_data(selected_year)  # Lấy dữ liệu từ SQLite
 
-    return render_template('labor_force_chart.html', data=data)
+    return render_template('labor_force_chart.html', data=data, selected_year=selected_year)
 
 # Lấy dữ liệu income từ SQLite
-def get_income_data():
+def get_income_data(year):
     conn = sqlite3.connect(Config.DB_NAME)
     cursor = conn.cursor()
     cursor.execute('''SELECT province, money 
                    FROM income 
+                   WHERE `year` = ? 
                    ORDER BY money DESC 
-                   LIMIT 10''')
+                   LIMIT 10''', (year,))
     data = cursor.fetchall()
     conn.close()
     return data
@@ -120,13 +256,14 @@ def get_income_data():
 # Route để hiển thị income theo Doughnut Chart
 @app.route('/income_chart')
 def income_doughnut_chart():
-    data = get_income_data()  # Lấy dữ liệu từ SQLite
+    selected_year = request.args.get('year', 'Sơ bộ 2023')
+    data = get_income_data(selected_year)  # Lấy dữ liệu từ SQLite
     provinces = [row[0] for row in data]
     money = [row[1] for row in data]
 
     sendingData = {"provinces": provinces, "money": money}
 
-    return render_template('income_chart.html', data=sendingData)
+    return render_template('income_chart.html', data=sendingData, selected_year=selected_year)
 
 # Dashboard
 @app.route('/')

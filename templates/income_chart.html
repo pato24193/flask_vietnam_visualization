@@ -1,13 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bar Chart</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
+    {% extends "base.html" %}
+
+    {% block content %}
+
+    <h1>Biểu đồ thu nhập</h1>
+
+    <div class="form-group mb-3">
+        <label for="year-select">Chọn năm:</label>
+        <form method="GET" action="/income_chart">
+            <select id="year-select" name="year" class="form-select" onchange="this.form.submit()">
+                <option value="2021" {% if selected_year == '2021' %}selected{% endif %}>2021</option>
+                <option value="2022" {% if selected_year == '2022' %}selected{% endif %}>2022</option>
+                <option value="Sơ bộ 2023" {% if selected_year == 'Sơ bộ 2023' %}selected{% endif %}>Sơ bộ 2023</option>
+            </select>
+        </form>
+    </div>
+
     <canvas id="barChart" width="400" height="400"></canvas>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         var ctx = document.getElementById('barChart').getContext('2d');
 
@@ -54,6 +64,6 @@
                 }
             }
         });
+
     </script>
-</body>
-</html>
+{% endblock %}

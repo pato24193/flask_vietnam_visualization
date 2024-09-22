@@ -1,11 +1,19 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Lực lượng Lao động - Line Chart</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block content %}
     <h1>Biểu đồ Lực lượng Lao động</h1>
+
+    <div class="form-group mb-3">
+        <label for="year-select">Chọn năm:</label>
+        <form method="GET" action="/labor_force_chart">
+            <select id="year-select" name="year" class="form-select" onchange="this.form.submit()">
+                <option value="2021" {% if selected_year == '2021' %}selected{% endif %}>2021</option>
+                <option value="2022" {% if selected_year == '2022' %}selected{% endif %}>2022</option>
+                <option value="Sơ bộ 2023" {% if selected_year == 'Sơ bộ 2023' %}selected{% endif %}>Sơ bộ 2023</option>
+            </select>
+        </form>
+    </div>
+    
     <canvas id="lineChart" width="800" height="400"></canvas>
     <script>
         // Chuyển đổi dữ liệu từ Flask thành JSON trong JavaScript
@@ -47,5 +55,4 @@
             }
         });
     </script>
-</body>
-</html>
+{% endblock %}
