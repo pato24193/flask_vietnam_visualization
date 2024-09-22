@@ -1,7 +1,6 @@
 import json
-
 import plotly.utils
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 import sqlite3
 import pandas as pd
 import plotly.graph_objects as go
@@ -65,11 +64,15 @@ app = Flask(__name__)
 #     return render_template('population_chart_wc.html')
 # ################# Minh: comment out un-used code
 
-def get_crime_data():
+def get_crime_data(year):
+    # Connect to the database
     conn = sqlite3.connect(Config.DB_NAME)
     cursor = conn.cursor()
-    cursor.execute('''SELECT province, cases FROM crimes''')
+
+    # Fetch data for the selected year
+    cursor.execute('''SELECT province, cases FROM crimes WHERE year = ?''', (year,))
     data = cursor.fetchall()
+
     # Creating DataFrame
     df = pd.DataFrame(data, columns=['province', 'cases'])
 
@@ -78,21 +81,21 @@ def get_crime_data():
 
     # Sort values by 'cases' and take the top 10
     df_sorted = df.sort_values(by='cases', ascending=False).head(10)
-    # print(df_sorted)
+
     # Customize bar chart with colors and labels
     fig = go.Figure([go.Bar(
         x=df_sorted['province'],
         y=df_sorted['cases'],
         marker=dict(
             color=df_sorted['cases'],  # Coloring bars based on the values
-            colorscale='YlOrRd',  # Choose a color scale, e.g., 'Viridis', 'Bluered', 'Cividis', etc.
+            colorscale='YlOrRd',  # Choose a color scale
             showscale=True  # Show color scale on the side
         )
     )])
 
     # Update layout for better appearance
     fig.update_layout(
-        title='Top 10 Provinces by Crime Cases in 2023',
+        title=f'Top 10 Provinces by Crime Cases in {year}',
         xaxis_title='Province',
         yaxis_title='Number of Cases',
         xaxis_tickangle=-45,  # Rotate x-axis labels for better readability
@@ -100,20 +103,19 @@ def get_crime_data():
             showline=True,
             showgrid=True,
             gridcolor='lightgray',
-            tickformat='digits',
-            linecolor='black',  # Set line color for y-axis
-            linewidth=0.5
+            linecolor='black',
+            linewidth=1
         ),
         xaxis=dict(
             showline=True,
-            linecolor='black',  # Set line color for y-axis
+            linecolor='black',
             linewidth=1
         ),
-        plot_bgcolor='rgba(0,0,0,0)',  # Set the plot background to transparent
-        paper_bgcolor='rgba(245,245,245,245)',  # Set the page background to transparent
+        plot_bgcolor='rgba(0,0,0,0)',  # Transparent background
+        paper_bgcolor='rgba(245,245,245,245)',  # Transparent page background
     )
 
-    # Convert plotly figure to JSON for rendering
+    # Convert Plotly figure to JSON for rendering
     graph_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
     # Close database connection
@@ -123,11 +125,29 @@ def get_crime_data():
     return graph_json
 
 
-# Route để hiển thị labor force theo line chart
+# Route to display the crime chart
 @app.route('/crime_chart')
 def crime_chart():
-    graph_json = get_crime_data()  # Lấy dữ liệu từ SQLite
-    return render_template('crime_chart.html', graph_json=graph_json)
+    # Fetch available years from the database
+    conn = sqlite3.connect(Config.DB_NAME)
+    cursor = conn.cursor()
+    cursor.execute('''SELECT DISTINCT year FROM crimes ORDER BY year''')
+    years = [row[0] for row in cursor.fetchall()]
+    conn.close()
+
+    # Render the template with the available years and an initial graph for the most recent year
+    initial_year = years[-1]  # Assume the most recent year is the last one in the list
+    graph_json = get_crime_data(initial_year)  # Initial graph for the most recent year
+    return render_template('crime_chart.html', years=years, graph_json=graph_json, selected_year=initial_year)
+
+
+@app.route('/update_crime_chart', methods=['POST'])
+def update_crime_chart():
+    # Get the selected year from the dropdown
+    selected_year = request.form.get('year')
+    # Get the updated graph data for the selected year
+    graph_json = get_crime_data(selected_year)
+    return graph_json
 
 def get_medical_data():
     conn = sqlite3.connect(Config.DB_NAME)
