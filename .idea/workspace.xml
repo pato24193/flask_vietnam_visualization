@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a6b2850c-e7f0-4a3a-9868-96dcafa16cf0" name="Changes" comment="" />
+    <list default="true" id="a6b2850c-e7f0-4a3a-9868-96dcafa16cf0" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/data_sqlite.db" beforeDir="false" afterPath="$PROJECT_DIR$/data_sqlite.db" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
