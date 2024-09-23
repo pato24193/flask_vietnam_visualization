@@ -20,10 +20,14 @@ DATABASE_URI = 'sqlite:///data_sqlite.db'
 engine = create_engine(DATABASE_URI)
 
 def dt_diaphuong_data():
-     # Lấy dữ liệu từ bảng 'dtdl_VN_tydong' trong cơ sở dữ liệu
-        query = 'SELECT * FROM dtdl_VN_tydong'
-        df = pd.read_sql(query, con=engine)
-        return df
+    # Lấy dữ liệu từ bảng 'dtdl_VN_tydong' trong cơ sở dữ liệu
+    query = """
+    SELECT * FROM dtdl_VN_tydong 
+    WHERE Row_country IN ('Hà Nội', 'TP. Hồ Chí Minh', 'Quảng  Nam', 'Đà Nẵng', 'Khánh  Hòa', 'Hải Phòng', 'Thừa Thiên-Huế', 'Quảng Ninh', 'Bà Rịa - Vũng Tàu','Quảng Bình')
+    """
+    df = pd.read_sql(query, con=engine)
+    return df
+
 
 def dt_vungdiaphuong_data():
      # Lấy dữ liệu từ bảng 'dtvdl_VN_tydong' trong cơ sở dữ liệu
