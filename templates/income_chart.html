@@ -26,7 +26,7 @@
         console.log(data);
         
         var provinces = data.provinces;
-        var updatingMoney = data.money.map(item => parseFloat(item.replace(',', '').replace('.', '')));
+        var updatingMoney = data.money.map(item => parseFloat(item));
         console.log(updatingMoney);
         
         var barChart = new Chart(ctx, {

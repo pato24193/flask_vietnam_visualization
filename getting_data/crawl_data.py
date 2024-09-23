@@ -202,9 +202,10 @@ class CrawlData:
         for td in list_td:
             try:
                 th = td.find_element(By.XPATH, "./preceding-sibling::th")
+                tdValue = td.text.replace(",", "").replace(".", "")
 
                 # Lưu kết quả vào cơ sở dữ liệu
-                self.save_to_db(th.text, str(year_input), td.text)
+                self.save_to_db(th.text, str(year_input), tdValue)
             except:
                 print(f'this <td> {td.text} is not lie next to <th>')
 
@@ -222,32 +223,32 @@ class CrawlData:
 # Ví dụ sử dụng
 if __name__ == "__main__":
     # luc luong lao dong
-    url = "https://www.gso.gov.vn/px-web-2/?pxid=V0237&theme=D%C3%A2n%20s%E1%BB%91%20v%C3%A0%20lao%20%C4%91%E1%BB%99ng"
-    # 2021, 2022, Sơ bộ 2023
-    years = ['2021']
-    table_name = 'labor_force'
-    column_name = 'labor_force'
+    # url = "https://www.gso.gov.vn/px-web-2/?pxid=V0237&theme=D%C3%A2n%20s%E1%BB%91%20v%C3%A0%20lao%20%C4%91%E1%BB%99ng"
+    # # 2021, 2022, Sơ bộ 2023
+    # years = ['Sơ bộ 2023']
+    # table_name = 'labor_force'
+    # column_name = 'labor_force'
 
     # thu nhap binh quan
     # url = "https://www.gso.gov.vn/px-web-2/?pxid=V1437&theme=Y%20t%E1%BA%BF%2C%20v%C4%83n%20h%C3%B3a%20v%C3%A0%20%C4%91%E1%BB%9Di%20s%E1%BB%91ng"
     # # 2021, 2022, Sơ bộ 2023
-    # years = ['2021']
+    # years = ['Sơ bộ 2023']
     # table_name = 'income'
     # column_name = 'money'
 
     # ti le toi pham
     # url = "https://www.gso.gov.vn/px-web-2/?pxid=V1466&theme=Y%20t%E1%BA%BF%2C%20v%C4%83n%20h%C3%B3a%20v%C3%A0%20%C4%91%E1%BB%9Di%20s%E1%BB%91ng"
     # # 2022, 2023
-    # years = ['2023']
+    # years = ['2022']
     # table_name = 'crimes'
     # column_name = 'cases'
 
     # y te: so co so kham chua benh
-    # url = "https://www.gso.gov.vn/px-web-2/?pxid=V1405&theme=Y%20t%E1%BA%BF%2C%20v%C4%83n%20h%C3%B3a%20v%C3%A0%20%C4%91%E1%BB%9Di%20s%E1%BB%91ng"
-    # # 2015, 2016, 2017
-    # years = ['2017']
-    # table_name = 'medicals'
-    # column_name = 'totals'
+    url = "https://www.gso.gov.vn/px-web-2/?pxid=V1405&theme=Y%20t%E1%BA%BF%2C%20v%C4%83n%20h%C3%B3a%20v%C3%A0%20%C4%91%E1%BB%9Di%20s%E1%BB%91ng"
+    # 2015, 2016, 2017
+    years = ['2017']
+    table_name = 'medicals'
+    column_name = 'totals'
 
     crawler = CrawlData(url, table_name=table_name, column_name=column_name)
     crawler.run(years)
