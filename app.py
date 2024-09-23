@@ -428,7 +428,7 @@ def doanhthu_diaphuong():
         title='Doanh thu du lịch Việt Nam từng địa phương (bar chart)',
         xaxis_title='Địa phương',
         yaxis_title='Tỷ đồng',
-        xaxis=dict(tickmode='linear', showline=True, linewidth=1, linecolor='black', tickangle=45),
+        xaxis=dict(tickmode='linear', showline=True, linewidth=1, linecolor='black'),
         yaxis=dict(showline=True, linewidth=1, linecolor='black', tickformat=','),
         autosize=False,
         height=600,
