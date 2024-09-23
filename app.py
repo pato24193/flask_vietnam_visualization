@@ -432,7 +432,7 @@ def doanhthu_diaphuong():
         yaxis=dict(showline=True, linewidth=1, linecolor='black', tickformat=','),
         autosize=False,
         height=600,
-        width=1260
+        width=1200
     )
 
     # Chuyển đổi biểu đồ thành HTML để nhúng vào template
@@ -480,7 +480,7 @@ def dt_vungdiaphuong():
         title=f'Tổng doanh thu du lịch Việt Nam theo vùng miền (Pie Chart)',
         autosize=False,
         height=500,
-        width=1260
+        width=1200
     )
 
     dt_vungdiaphuong = fig.to_html(full_html=False)
@@ -492,5 +492,5 @@ def dt_vungdiaphuong():
 if __name__ == '__main__':
     # app.run(debug=True)
     import os
-    port = int(os.environ.get('PORT', 8080))  # Dùng 8080 là port mặc định khi không có biến môi trường
+    port = int(os.environ.get('PORT', 8780))  # Dùng 8080 là port mặc định khi không có biến môi trường
     app.run(host='0.0.0.0', debug=True, port=port)
