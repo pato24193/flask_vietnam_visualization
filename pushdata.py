@@ -3,7 +3,7 @@ import pandas as pd
 from sqlalchemy import create_engine
 
 # Đường dẫn chính xác tới file Excel
-file_path = 'sltk_doanhthu_dulich_vungdiaphuong.xlsx'
+file_path = 'sltk_doanhthu_dulich_diaphuong1.xlsx'
 
 # Kiểm tra xem file có tồn tại không
 if os.path.exists(file_path):
@@ -18,7 +18,7 @@ if os.path.exists(file_path):
         engine = create_engine(DATABASE_URI)
 
         # Đưa dữ liệu vào bảng 'KQT_phantheothitruong'
-        df.to_sql('dtvdl_VN_tydong', con=engine, if_exists='replace', index=False)
+        df.to_sql('dtdl_VN_tydong', con=engine, if_exists='replace', index=False)
 
         print("Dữ liệu đã được nhập vào cơ sở dữ liệu thành công!")
 
