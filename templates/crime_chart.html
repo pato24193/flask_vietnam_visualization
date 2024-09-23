@@ -1,15 +1,18 @@
 {% extends "base.html" %}
+
 {% block content %}
 <body>
     <h1>Biểu đồ các vụ án đã khởi tố theo tỉnh thành</h1>
 
-    <!-- Dropdown to select year -->
-    <label for="year">Chọn năm:</label>
-    <select id="year" name="year" onchange="updateGraph()">
-        {% for year in years %}
-            <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>{{ year }}</option>
-        {% endfor %}
-    </select>
+    <div class="form-group mb-3">
+        <!-- Dropdown to select year -->
+        <label for="year">Chọn năm:</label>
+        <select id="year" name="year" class="form-select" onchange="updateGraph()">
+            {% for year in years %}
+                <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>{{ year }}</option>
+            {% endfor %}
+        </select>
+    </div>
 
     <!-- Div to render the Plotly graph -->
     <div id="bar-chart"></div>
