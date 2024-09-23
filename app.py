@@ -121,9 +121,9 @@ def get_crime_data(year):
 
     # Update layout for better appearance
     fig.update_layout(
-        title=f'Top 10 Provinces by Crime Cases in {year}',
-        xaxis_title='Province',
-        yaxis_title='Number of Cases',
+        title=f'Dữ liệu các vụ án đã khởi tố năm {year}',
+        xaxis_title='Tỉnh/thành',
+        yaxis_title='Số vụ án',
         xaxis_tickangle=-45,  # Rotate x-axis labels for better readability
         yaxis=dict(
             showline=True,
@@ -138,7 +138,7 @@ def get_crime_data(year):
             linewidth=1
         ),
         plot_bgcolor='rgba(0,0,0,0)',  # Transparent background
-        paper_bgcolor='rgba(245,245,245,245)',  # Transparent page background
+        paper_bgcolor='rgba(0,0,0,0)',  # Transparent page background
     )
 
     # Convert Plotly figure to JSON for rendering
@@ -205,9 +205,9 @@ def get_medical_data(year):
 
     # Update layout for better appearance
     fig.update_layout(
-        title=f'Top 10 Provinces by Number of Health Facilities in {year}',
-        xaxis_title='Number of Health Facilities',
-        yaxis_title='Province',
+        title=f'Dữ liệu y tế năm {year}',
+        xaxis_title='Số cơ sở y tế',
+        yaxis_title='Tỉnh/thành',
         yaxis=dict(
             autorange="reversed",  # Ensure the largest bar is at the top
             showline=True,
