@@ -1,19 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crime Cases by Province</title>
-    <!-- Include Plotly.js -->
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <!-- Include jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-</head>
+{% extends "base.html" %}
+{% block content %}
 <body>
-    <h1>Crime Cases by Province</h1>
+    <h1>Biểu đồ các vụ án đã khởi tố theo tỉnh thành</h1>
 
     <!-- Dropdown to select year -->
-    <label for="year">Select Year:</label>
+    <label for="year">Chọn năm:</label>
     <select id="year" name="year" onchange="updateGraph()">
         {% for year in years %}
             <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>{{ year }}</option>
@@ -45,4 +36,4 @@
         Plotly.newPlot('bar-chart', graphJSON.data, graphJSON.layout);
     </script>
 </body>
-</html>
+{% endblock %}
