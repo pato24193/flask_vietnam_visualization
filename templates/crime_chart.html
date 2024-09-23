@@ -21,6 +21,11 @@
         // Initial graph data from Flask
         var graphJSON = {{ graph_json | safe }};
 
+        // Function to render the initial graph on page load
+        function renderInitialGraph() {
+            Plotly.newPlot('bar-chart', graphJSON.data, graphJSON.layout);
+        }
+
         // Function to update the graph based on selected year
         function updateGraph() {
             var selectedYear = $('#year').val();
@@ -29,14 +34,17 @@
                 url: '/update_crime_chart',
                 data: { year: selectedYear },
                 success: function(updatedGraphJSON) {
-                    // Render the updated graph
-                    Plotly.newPlot('bar-chart', updatedGraphJSON.data, updatedGraphJSON.layout);
+                    var updatedGraphData = JSON.parse(updatedGraphJSON);
+                    Plotly.newPlot('bar-chart', updatedGraphData.data, updatedGraphData.layout);
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error occurred during the AJAX request:", error);
                 }
             });
         }
 
-        // Render the initial graph
-        Plotly.newPlot('bar-chart', graphJSON.data, graphJSON.layout);
+        // Render the initial graph on page load
+        renderInitialGraph();
     </script>
 </body>
 {% endblock %}
