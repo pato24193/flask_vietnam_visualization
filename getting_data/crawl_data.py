@@ -82,7 +82,7 @@ class CrawlData:
         self.driver.get(self.url)
 
         # Chuyển vào iframe chứa các thẻ <select>
-        iframe = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, "iframe")))
+        iframe = WebDriverWait(self.driver, 40).until(EC.presence_of_element_located((By.TAG_NAME, "iframe")))
         self.driver.switch_to.frame(iframe)
 
         # Lấy tất cả các thẻ <select> trên trang
@@ -94,81 +94,125 @@ class CrawlData:
         province_select = select_elements[0]  # Thẻ <select> đầu tiên
 
         # Lấy tất cả các tỉnh thành từ thẻ <select> đầu tiên
-        provinces = [option.text for option in Select(province_select).options]
-        regions = [
-            'TỔNG SỐ'
-            'CẢ NƯỚC',
-            'Đồng bằng sông Hồng',
-            'Trung du và miền núi phía Bắc',
-            'Bắc Trung Bộ và duyên hải miền Trung',
-            'Đồng bằng sông Cửu Long',
-            'Đông Nam Bộ'
+        province_texts_selected = [
+            'Hà Nội',
+            'Vĩnh Phúc',
+            'Bắc Ninh',
+            'Quảng Ninh',
+            'Hải Dương',
+            'Hải Phòng',
+            'Hưng Yên',
+            'Thái Bình',
+            'Hà Nam',
+            'Nam Định',
+            'Ninh Bình',
+            'Hà Giang',
+            'Cao Bằng',
+            'Bắc Kạn',
+            'Tuyên Quang',
+            'Lào Cai',
+            'Yên Bái',
+            'Thái Nguyên',
+            'Lạng Sơn',
+            'Bắc Giang',
+            'Phú Thọ',
+            'Điện Biên',
+            'Lai Châu',
+            'Sơn La',
+            'Hòa Bình',
+            'Hoà Bình',
+            'Thanh Hóa',
+            'Thanh Hoá',
+            'Nghệ An',
+            'Hà Tĩnh',
+            'Quảng Bình',
+            'Quảng Trị',
+            'Thừa Thiên - Huế',
+            'Thừa Thiên-Huế',
+            'Thừa Thiên Huế',
+            'Đà Nẵng',
+            'Quảng Nam',
+            'Quảng Ngãi',
+            'Bình Định',
+            'Phú Yên',
+            'Khánh Hòa',
+            'Khánh Hoà',
+            'Ninh Thuận',
+            'Bình Thuận',
+            'Tây Nguyên',
+            'Kon Tum',
+            'Gia Lai',
+            'Đắk Lắk',
+            'Đắk Nông',
+            'Lâm Đồng',
+            'Bình Phước',
+            'Tây Ninh',
+            'Bình Dương',
+            'Đồng Nai',
+            'Bà Rịa - Vũng Tàu',
+            'TP. Hồ Chí Minh',
+            'TP.Hồ Chí Minh',
+            'Long An',
+            'Tiền Giang',
+            'Bến Tre',
+            'Trà Vinh',
+            'Vĩnh Long',
+            'Đồng Tháp',
+            'An Giang',
+            'Kiên Giang',
+            'Cần Thơ',
+            'Hậu Giang',
+            'Sóc Trăng',
+            'Bạc Liêu',
+            'Cà Mau'
         ]
 
-        first = True
-
         # Duyệt qua từng tỉnh thành và chọn năm nhập vào
-        for province_text in provinces:
-            if province_text in regions:
-                continue
+        for province_text in province_texts_selected:
+            try:
+                Select(province_select).select_by_visible_text(province_text)  # Chọn tỉnh thành
+            except:
+                print(f"Cannot select '{province_text}'")
 
-            if not first:
-                iframe = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, "iframe")))
-                self.driver.switch_to.frame(iframe)
-                select_elements = WebDriverWait(self.driver, 10).until(
-                    EC.presence_of_all_elements_located((By.TAG_NAME, "select"))
-                )
-            else:
-                first = False
+        year_select = select_elements[1]  # Thẻ <select> thứ hai
+        Select(year_select).select_by_visible_text(str(year_input))  # Chọn năm
 
-            province_select = select_elements[0]  # Thẻ <select> đầu tiên
-            year_select = select_elements[1]  # Thẻ <select> thứ hai
+        if self.table_name == 'crimes':
+            crime_select = select_elements[2]
+            Select(crime_select).select_by_visible_text('Số vụ án đã bị khởi tố')
 
-            Select(province_select).select_by_visible_text(province_text)  # Chọn tỉnh thành
-            Select(year_select).select_by_visible_text(str(year_input))  # Chọn năm
+        if self.table_name == 'medicals':
+            medical_select = select_elements[2]
+            Select(medical_select).select_by_visible_text('Tổng số')
 
-            if self.table_name == 'crimes':
-                crime_select = select_elements[2]
+        # Click vào button 'Tiếp tục'
+        continue_button = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.XPATH, "//input[@value='Tiếp tục']")))
+        continue_button.click()
 
-                # # Lấy toàn bộ HTML bên trong thẻ <select>
-                # inner_html = crime_select.get_attribute("innerHTML")
+        # Kiểm tra và xử lý popup (nếu có)
+        self.handle_popup()
+        
+        # Lấy tất cả các bảng trên trang
+        tables = self.driver.find_elements(By.TAG_NAME, "table")
 
-                # # In toàn bộ HTML của thẻ <select>
-                # print(inner_html)
+        # Lấy bảng cuối cùng và list <td> của bảng
+        last_table = tables[2]
+        list_td = last_table.find_elements(By.TAG_NAME, "td")
 
-                Select(crime_select).select_by_visible_text('Số vụ án đã bị khởi tố')
+        for td in list_td:
+            try:
+                th = td.find_element(By.XPATH, "./preceding-sibling::th")
 
-            if self.table_name == 'medicals':
-                medical_select = select_elements[2]
-
-                Select(medical_select).select_by_visible_text('Tổng số')
-
-            # Click vào button 'Tiếp tục'
-            continue_button = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.XPATH, "//input[@value='Tiếp tục']")))
-            continue_button.click()
-
-            # Kiểm tra và xử lý popup (nếu có)
-            self.handle_popup()
-            
-            # Lấy tất cả các bảng trên trang
-            tables = self.driver.find_elements(By.TAG_NAME, "table")
-            print(len(tables))
-
-            # Lấy bảng cuối cùng và ô <td> cuối cùng của bảng
-            last_table = tables[2]
-            last_td = last_table.find_elements(By.TAG_NAME, "td")[-1]
-            value_needed = last_td.text
-
-            # Lưu kết quả vào cơ sở dữ liệu
-            self.save_to_db(province_text, str(year_input), value_needed)
-
-            self.driver.back()
-            print(province_text)
+                # Lưu kết quả vào cơ sở dữ liệu
+                self.save_to_db(th.text, str(year_input), td.text)
+            except:
+                print(f'this <td> {td.text} is not lie next to <th>')
 
     # Hàm chạy chương trình
-    def run(self, year_input):
+    def run(self, years):
         try:
-            self.scrape_data(year_input)
+            for year_input in years:
+                self.scrape_data(year_input)
         finally:
             self.driver.quit()
             self.conn.commit()
@@ -178,28 +222,32 @@ class CrawlData:
 # Ví dụ sử dụng
 if __name__ == "__main__":
     # luc luong lao dong
-    # url = "https://www.gso.gov.vn/px-web-2/?pxid=V0237&theme=D%C3%A2n%20s%E1%BB%91%20v%C3%A0%20lao%20%C4%91%E1%BB%99ng"
-    # year_input = 'Sơ bộ 2023'
-    # table_name = 'labor_force'
-    # column_name = 'labor_force'
+    url = "https://www.gso.gov.vn/px-web-2/?pxid=V0237&theme=D%C3%A2n%20s%E1%BB%91%20v%C3%A0%20lao%20%C4%91%E1%BB%99ng"
+    # 2021, 2022, Sơ bộ 2023
+    years = ['2021']
+    table_name = 'labor_force'
+    column_name = 'labor_force'
 
     # thu nhap binh quan
     # url = "https://www.gso.gov.vn/px-web-2/?pxid=V1437&theme=Y%20t%E1%BA%BF%2C%20v%C4%83n%20h%C3%B3a%20v%C3%A0%20%C4%91%E1%BB%9Di%20s%E1%BB%91ng"
-    # year_input = 'Sơ bộ 2023'
+    # # 2021, 2022, Sơ bộ 2023
+    # years = ['2021']
     # table_name = 'income'
     # column_name = 'money'
 
     # ti le toi pham
     # url = "https://www.gso.gov.vn/px-web-2/?pxid=V1466&theme=Y%20t%E1%BA%BF%2C%20v%C4%83n%20h%C3%B3a%20v%C3%A0%20%C4%91%E1%BB%9Di%20s%E1%BB%91ng"
-    # year_input = '2023'
+    # # 2022, 2023
+    # years = ['2023']
     # table_name = 'crimes'
     # column_name = 'cases'
 
     # y te: so co so kham chua benh
-    url = "https://www.gso.gov.vn/px-web-2/?pxid=V1405&theme=Y%20t%E1%BA%BF%2C%20v%C4%83n%20h%C3%B3a%20v%C3%A0%20%C4%91%E1%BB%9Di%20s%E1%BB%91ng"
-    year_input = '2017'
-    table_name = 'medicals'
-    column_name = 'totals'
+    # url = "https://www.gso.gov.vn/px-web-2/?pxid=V1405&theme=Y%20t%E1%BA%BF%2C%20v%C4%83n%20h%C3%B3a%20v%C3%A0%20%C4%91%E1%BB%9Di%20s%E1%BB%91ng"
+    # # 2015, 2016, 2017
+    # years = ['2017']
+    # table_name = 'medicals'
+    # column_name = 'totals'
 
     crawler = CrawlData(url, table_name=table_name, column_name=column_name)
-    crawler.run(year_input)
+    crawler.run(years)

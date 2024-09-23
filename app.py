@@ -442,9 +442,9 @@ def dt_vungdiaphuong():
     df = dt_vungdiaphuong_data()
 
     # Chuyển đổi dữ liệu float
-    years = ['2010', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022']
-    for year in years:
-        convert_to_float(df, year)
+    # years = ['2010', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022']
+    # for year in years:
+    #     convert_to_float(df, year)
 
     # Mặc định sẽ hiển thị năm đầu tiên nếu không có POST request
     selected_year = '2010'
@@ -454,8 +454,8 @@ def dt_vungdiaphuong():
 
     fig = go.Figure()
 
-    # Định dạng giá trị theo dấu phẩy (hàng nghìn)
-    values_with_commas = [f'{int(value):,}' for value in df[selected_year]]
+    # Định dạng giá trị theo dấu phẩy (hàng nghìn)  
+    values_with_commas = [f'{int(value):,.0f} tỷ dồng' for value in df[selected_year]]
 
     # Vẽ biểu đồ dạng bánh (Pie chart)
     fig.add_trace(go.Pie(
@@ -466,14 +466,14 @@ def dt_vungdiaphuong():
             colors=['#FF0001', '#0000FF', '#33FFFF', '#FFA500', '#FFF000'],  # Màu sắc cho từng phần của bánh
             line=dict(width=0, color='black')  # Đường viền
         ),
-        hoverinfo='label+percent+value',  # Hiển thị thông tin khi hover
+        hoverinfo='label+percent+text',  # Hiển thị thông tin khi hover
         hovertext=values_with_commas  # Giá trị đã định dạng dấu phẩy
     ))
 
     fig.update_traces(marker_line_color='rgb(8,48,107)', marker_line_width=0, opacity=0.7)
 
     fig.update_layout(
-        title=f'Doanh thu du lịch Việt Nam theo vùng miền (Pie Chart)',
+        title=f'Tổng doanh thu du lịch Việt Nam theo vùng miền (Pie Chart)',
         autosize=False,
         height=500,
         width=1260
