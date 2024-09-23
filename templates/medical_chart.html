@@ -13,12 +13,18 @@
             {% endfor %}
         </select>
     </div>
+
     <!-- Div to render the Plotly graph -->
     <div id="bar-chart"></div>
 
     <script type="text/javascript">
-        // Initial graph data from Flask (graphJSON is safely encoded as a string)
-        var graphJSON = {{ graph_json | safe }};
+        // Initial graph data from Flask, make sure it's parsed as JSON
+        var graphJSON = JSON.parse('{{ graph_json | safe }}');
+
+        // Function to render the initial graph on page load
+        function renderInitialGraph() {
+            Plotly.newPlot('bar-chart', graphJSON.data, graphJSON.layout);
+        }
 
         // Function to update the graph based on selected year
         function updateGraph() {
@@ -28,17 +34,19 @@
                 url: '/update_medical_chart',
                 data: { year: selectedYear },
                 success: function(updatedGraphJSON) {
-                    // Parse the JSON and render the updated graph
-                    var graphData = JSON.parse(updatedGraphJSON);
-                    Plotly.newPlot('bar-chart', updatedGraphJSON.data, updatedGraphJSON.layout);
+                    var updatedGraphData = JSON.parse(updatedGraphJSON);
+                    Plotly.newPlot('bar-chart', updatedGraphData.data, updatedGraphData.layout);
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error occurred during the AJAX request:", error);
                 }
             });
         }
 
-        // Render the initial graph
-        Plotly.newPlot('bar-chart', graphJSON.data, graphJSON.layout);
-
+        // Render the initial graph on page load
+        renderInitialGraph();
     </script>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 {% endblock %}
