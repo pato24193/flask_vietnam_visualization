@@ -4,8 +4,8 @@ from sqlalchemy import create_engine
 
 # Danh sách các file Excel và tên bảng tương ứng
 files_and_tables = {
-    'data/sltk_doanhthu_dulich_diaphuong1.xlsx': 'dtdl_VN_tydong',
-    'data/sltk_doanhthu_dulich_vungdiaphuong.xlsx': 'dtvdl_VN_tydong',  # Thêm file và tên bảng mới tại đây
+    'sltk_doanhthu_dulich_diaphuong1.xlsx': 'dtdl_VN_tydong',
+    'sltk_doanhthu_dulich_vungdiaphuong.xlsx': 'dtvdl_VN_tydong',  # Thêm file và tên bảng mới tại đây
     # Bạn có thể thêm nhiều file và tên bảng hơn
 }
 
