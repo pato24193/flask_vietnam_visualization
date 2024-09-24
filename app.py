@@ -276,14 +276,30 @@ def get_labor_data(year):
     conn.close()
     return data
 
+def get_labor_data_asc(year):
+    conn = sqlite3.connect(Config.DB_NAME)
+    cursor = conn.cursor()
+    cursor.execute('''SELECT province, labor_force 
+                   FROM labor_force 
+                   WHERE `year` = ? 
+                   ORDER BY labor_force ASC 
+                   LIMIT 10''', (year,))
+    data = cursor.fetchall()
+    conn.close()
+    return data
+
 
 # Route để hiển thị labor force theo line chart
 @app.route('/labor_force_chart')
 def labor_force_chart():
     selected_year = request.args.get('year', 'Sơ bộ 2023')
     data = get_labor_data(selected_year)  # Lấy dữ liệu từ SQLite
+    data_asc = get_labor_data_asc(selected_year)
 
-    return render_template('labor_force_chart.html', data=data, selected_year=selected_year)
+    return render_template('labor_force_chart.html'
+                           , data=data
+                           , selected_year=selected_year
+                           , data_asc=data_asc)
 
 
 # Lấy dữ liệu income từ SQLite

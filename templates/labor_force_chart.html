@@ -29,10 +29,51 @@
             data: {
                 labels: provinces,
                 datasets: [{
-                    label: 'Lực lượng Lao động',
+                    label: 'Lực lượng lao động cao',
                     data: laborForces,
                     borderColor: 'rgba(75, 192, 192, 1)',
                     backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Tỉnh/Thành'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Lực lượng Lao động'
+                        },
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+    <canvas id="lineChartAsc" width="800" height="400" class="mt-5"></canvas>
+    <script>
+        // Chuyển đổi dữ liệu từ Flask thành JSON trong JavaScript
+        var data_asc = {{ data_asc | tojson }};
+        
+        // Tách dữ liệu thành các mảng riêng biệt cho trục X và Y
+        var provinces_asc = data_asc.map(item => item[0]);
+        var laborForces_asc = data_asc.map(item => parseFloat(item[1])); // Chuyển đổi số liệu từ string thành float
+
+        var ctx = document.getElementById('lineChartAsc').getContext('2d');
+        var lineChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: provinces_asc,
+                datasets: [{
+                    label: 'Lực lượng lao động thấp',
+                    data: laborForces_asc,
+                    borderColor: 'rgba(245, 40, 145, 1)',
+                    backgroundColor: 'rgba(245, 40, 145, 0.2)',
                     borderWidth: 1
                 }]
             },
