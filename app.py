@@ -56,18 +56,18 @@ def convert_to_float(df, column_name):
 #     return data
 
 # Tạo word cloud từ dữ liệu
-# def create_word_cloud(data):
-#     word_freq = {item[0]: item[1] for item in data}
+def create_word_cloud(data):
+    word_freq = {item[0]: item[1] for item in data}
 
-#     wordcloud = WordCloud(width=800, height=400, 
-#                           background_color="white").generate_from_frequencies(word_freq)
+    wordcloud = WordCloud(width=800, height=400, 
+                          background_color="white").generate_from_frequencies(word_freq)
 
-#     # Đảm bảo thư mục tồn tại
-#     if not os.path.exists('static/images'):
-#         os.makedirs('static/images')
+    # Đảm bảo thư mục tồn tại
+    if not os.path.exists('static/images'):
+        os.makedirs('static/images')
 
-#     # Lưu word cloud thành file hình ảnh
-#     wordcloud.to_file('static/images/wordcloud.png')
+    # Lưu word cloud thành file hình ảnh
+    wordcloud.to_file('static/images/wordcloud.png')
 
 # Route để hiển thị popluation theo bar chart
 # @app.route('/')
@@ -310,6 +310,9 @@ def income_doughnut_chart():
 
     sendingData = {"provinces": provinces, "money": money}
 
+    # create income's wordcloud
+    create_word_cloud(data)
+
     return render_template('income_chart.html', data=sendingData, selected_year=selected_year)
 
 
@@ -504,5 +507,5 @@ if __name__ == '__main__':
     # app.run(debug=True)
     import os
 
-    port = int(os.environ.get('PORT', 8780))  # Dùng 8080 là port mặc định khi không có biến môi trường
+    port = int(os.environ.get('PORT', 8080))  # Dùng 8080 là port mặc định khi không có biến môi trường
     app.run(host='0.0.0.0', debug=True, port=port)
