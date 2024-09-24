@@ -465,7 +465,7 @@ def doanhthu_diaphuong():
         yaxis=dict(showline=True, linewidth=1, linecolor='black', tickformat=','),
         autosize=False,
         height=600,
-        width=1200
+        width=1250
     )
 
     # Chuyển đổi biểu đồ thành HTML để nhúng vào template
@@ -512,7 +512,7 @@ def dt_vungdiaphuong():
         title=f'Tổng doanh thu du lịch Việt Nam theo vùng miền (Pie Chart)',
         autosize=False,
         height=500,
-        width=1200
+        width=1250
     )
 
     dt_vungdiaphuong = fig.to_html(full_html=False)
