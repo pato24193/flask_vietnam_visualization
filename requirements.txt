@@ -5,3 +5,4 @@ Requests==2.32.3
 selenium==4.25.0
 SQLAlchemy==2.0.35
 wordcloud==1.9.3
+openpyxl=3.1.5
